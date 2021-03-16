@@ -9,10 +9,10 @@ Author URI: www.belop.com.ar
 License: GPL2
 */
 
-define('CRUD_PLUGIN_PATH', plugin_dir_path( __FILE__ ));
+define('ESTILOS_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('BELOP_AIDC_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
-
-//CPT PARA LAS NOTAS
+//CPT PARA LAS acreditaciones
 if ( ! function_exists('acreditaciones') ) {
 
     // Register Custom Post Type
@@ -121,7 +121,7 @@ function campos_remate($post){
         </tr>
         <tr>
         <td><strong>Competencias Adquiridas </strong></td>
-        <td><input type="text" name="aidc-competencias" value="<?php echo sanitize_text_field($competencias);?>" class="large-text" placeholder="Ingrese las competencias" /></td>
+        <td><input type="text" name="aidc-competencias" value="<?php echo sanitize_text_field($competencias);?>" class="large-text" placeholder="Ingrese las competencias separándolas por coma" /></td>
         </tr>
     </table>
 <?php 
@@ -176,4 +176,28 @@ function custom_enter_title( $input ) {
     if( is_admin() && 'Añadir el título' == $input && 'acreditacion' == $post_type )
         return 'Ingrese Nombre y Apellido del acreditado';
     return $input;
+}
+
+//enqueque estilos y js
+function assets_aidc(){
+    //boostrap
+    wp_enqueue_style('bootstrap','https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',null,'1');
+    wp_enqueue_style('font_asesome','https://use.fontawesome.com/releases/v5.0.7/css/all.css',null,'1');
+    wp_enqueue_style('estilos',  ESTILOS_PLUGIN_URL .'css/estilos.css', null, '1');
+    
+    //bootstrap js
+    wp_enqueue_script( 'boot2','https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js', array( 'jquery' ),'',true );
+    wp_enqueue_script( 'boot3','https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js', array( 'jquery' ),'',true );
+    //mi js
+    wp_enqueue_script( 'mijs',ESTILOS_PLUGIN_URL .'js/app.js', array( 'jquery' ),'',true );
+
+}
+add_action('wp_enqueue_scripts','assets_aidc');
+
+//shortcode para el hero
+add_shortcode('search_acreditados', 'acreditados_template');
+
+function acreditados_template(){
+    $url = BELOP_AIDC_PLUGIN_PATH .'templates/search.php';
+    require_once ("$url");
 }
