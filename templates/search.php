@@ -27,11 +27,16 @@
     //var_dump($data);
     ?>
 
-
-<div class="container ">
-    <div class=" mt-5">
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h2 class="display-4">Acreditados por AIDC</h2>
+    <p class="lead">Listados de profesionales acreditados</p>
+  </div>
+</div>
+<div class="container cuerpo-busqueda">
+    <div class="">
         <div class="row justify-content-center">
-          <div class="col-12 col-sm-7 col-lg-4">
+          <div class="col-12 col-sm-7 col-lg-5">
               <input type="text" id="q" name="s" class="form-control input-busqueda" placeholder="Ingresá nombre y apellido o código">
           </div>
           
