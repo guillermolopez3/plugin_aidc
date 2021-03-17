@@ -6,60 +6,22 @@
         'orderby' => array(
             'aidc-fecha' => 'asc'
         ),
-        'posts_per_page'=> 10,
+        'posts_per_page'=> 21,
         //'paged'         => $_page, 
     );
 
     $acreditacion = new WP_Query($query_1); 
     //var_dump($acreditacion);
 
-    $args_2= array(
-        'post_type'     => 'acreditacion',
-        'post_status' => 'publish',
-        'meta_query' => array(
-            array(
-                'key'     => 'aidc-codigo',
-                'value'   => 'AXR43219FF',
-                'compare' => 'LIKE'
-            ),
-        ),
-    );
-
-    // $map_posts = new WP_Query(
-    //     array(
-    //     'post_type' => 'acreditacion',
-    //     'title_filter' => 'Lope',
-    //     'title_filter_relation' => 'OR',
-    //     'meta_query' => array(
-    //         'relation' => 'OR',
-    //         array(
-    //         'key' => 'aidc-codigo',
-    //         'value' => 'lope',
-    //         'compare' => 'LIKE'
-    //     )))
-    // );
-    // $map_posts = new WP_Query(
-    //     array(
-    //         'post_type' => 'acreditacion',
-    //         'post_status' => 'publish',
-    //         's' => 'lopez',
-    //         'meta_query' => array(
-    //             'relation' => 'AND',
-    //             array(
-    //             'key' => 'aidc-codigo',
-    //             'value' => 'lopez',
-    //             'compare' => 'LIKE'
-    //         ),      
-    //         ))
-    //   );
+   
 
     $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
-    FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
-WHERE 1=1 
-AND (wp_posts.post_title LIKE "%AXR43219FF%") AND wp_posts.post_type = "acreditacion" 
-AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "AXR43219FF")) 
-GROUP BY wp_posts.ID 
-ORDER BY wp_posts.post_date DESC';
+    --     FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
+    -- WHERE 1=1 
+    -- AND (wp_posts.post_title LIKE "%AXR43219FF%") AND wp_posts.post_type = "acreditacion" 
+    -- AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "AXR43219FF")) 
+    -- GROUP BY wp_posts.ID 
+    -- ORDER BY wp_posts.post_date DESC';
 
     $wpdb->query($wpdb->prepare($query)); 
     $data = $wpdb->last_result;

@@ -19,8 +19,11 @@ jQuery(document).ready(function($){
                    // $('#sendModal').modal('show');
                 },
                 success: function(resp){
-                    var mk = listResultRepoVtaMarckup(resp);
-                    $('#lista').html(mk)
+                    if(resp != null){
+                        var mk = listResultRepoVtaMarckup(resp);
+                        $('#lista').html(mk)
+                    }
+                    
                 }
             })//fin ajax
         }

@@ -219,7 +219,6 @@ add_action('wp_ajax_filterAcreditados', 'filter_acreditados');
 add_action('wp_ajax_nopriv_filterAcreditados', 'filter_acreditados');
 
 function filter_acreditados(){
-    //$q = $_POST['busqueda'];
     global $wpdb;
     if(isset( $_POST['busqueda']) && !empty( $_POST['busqueda'] ) ){
         //busqueda por titulo del post y por la metadata
