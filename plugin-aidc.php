@@ -184,10 +184,17 @@ function assets_aidc(){
     wp_enqueue_style('bootstrap','https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',null,'1');
     wp_enqueue_style('font_asesome','https://use.fontawesome.com/releases/v5.0.7/css/all.css',null,'1');
     wp_enqueue_style('estilos',  ESTILOS_PLUGIN_URL .'css/estilos.css', null, '1');
+
+    //alertify
+    wp_enqueue_style('alertify','https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css',null,'1');
+    wp_enqueue_style('alertify_1','https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css',null,'1');
     
     //bootstrap js
     wp_enqueue_script( 'boot2','https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js', array( 'jquery' ),'',true );
     wp_enqueue_script( 'boot3','https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js', array( 'jquery' ),'',true );
+
+    //alertifi js
+    wp_enqueue_script( 'alertify_js','//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js', array( 'jquery' ),'',true );
     //mi js
     wp_enqueue_script( 'mijs',ESTILOS_PLUGIN_URL .'js/app.js', array( 'jquery' ),'',true );
 

@@ -13,15 +13,18 @@ jQuery(document).ready(function($){
                     busqueda : q
                 },
                 error: function(){
-                   // alertify.error('Error al guardar');
+                   alertify.error('Error al buscar los datos');
                 },
                 beforeSend: function(){
-                   // $('#sendModal').modal('show');
+                   alertify.notify('Buscando resultados...','info')
                 },
                 success: function(resp){
                     if(resp != null){
                         var mk = listResultRepoVtaMarckup(resp);
                         $('#lista').html(mk)
+                        alertify.success('datos agregados con exito');
+                    }else{
+                        alertify.notify('No se encontraron coincidencias','warning')
                     }
                     
                 }
