@@ -7,11 +7,10 @@
             'aidc-fecha' => 'asc'
         ),
         'posts_per_page'=> 21,
-        //'paged'         => $_page, 
+        'paged' => get_query_var('paged') ? get_query_var('paged') : 1
     );
 
     $acreditacion = new WP_Query($query_1); 
-    //var_dump($acreditacion);
 
    
 
@@ -33,7 +32,7 @@
     <div class=" mt-5">
         <div class="row justify-content-center">
           <div class="col-12 col-sm-7 col-lg-4">
-              <input type="text" id="q" name="s" class="form-control" placeholder="Ingresá nombre y apellido o código">
+              <input type="text" id="q" name="s" class="form-control input-busqueda" placeholder="Ingresá nombre y apellido o código">
           </div>
           
           <div class="col-12 col-sm-2 mt-3 mt-sm-0">
@@ -87,4 +86,34 @@
         ?>
       </div>
     </div>
+    <div class="text-center">
+            <?php
+                    $total_pages = $acreditacion->max_num_pages;
+                    if ($total_pages > 1){
+
+                        $current_page = max(1, get_query_var('paged'));
+            
+                        $pagination = paginate_links(array(
+                            'base' => get_pagenum_link(1) . '%_%',
+                            'format' => '/page/%#%',
+                            'current' => $current_page,
+                            'total' => $total_pages,
+                            'type' => 'array',
+                            'prev_text'    => __('<<'),
+                            'next_text'    => __('>>'),
+                            'add_args'  => array()
+                        ));
+
+                        if ( ! empty( $pagination ) ){ ?>
+                         <ul class="pagination paginacion-ul">
+                                <?php foreach ( $pagination as $key => $page_link ) : ?>
+                                    <li class="page-item<?php if ( strpos( $page_link, 'current' ) !== false ) { echo ' active'; } ?>"><?php echo $page_link ?></li>
+                                <?php endforeach ?>
+                            </ul>   
+                     <?php       
+                        }                        
+                    }
+            ?>
+            
+         </div>
   </div>
