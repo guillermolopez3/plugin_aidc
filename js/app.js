@@ -49,7 +49,7 @@ function listResultRepoVtaMarckup(data){
         marckUp +=             '</div>'
         marckUp +=            '<hr>'
         marckUp +=            '<h3 class="card-title">'+ d.nombre +'</h3>'
-        marckUp +=            '<h6 class="card-subtitle mb-2 text-muted">Pasaporte:'+ d.pasaporte+'</h6>'
+        // marckUp +=            '<h6 class="card-subtitle mb-2 text-muted">Pasaporte:'+ d.pasaporte+'</h6>'
         marckUp +=            '<p class="mb-2"><strong>mail:</strong>'+ d.mail +'</p>'
         marckUp +=            '<p class="mb-2"><strong>Teléfono:</strong>'+d.tel+'</p>'
         marckUp +=            '<p class="mb-2"><strong>País:</strong>'+ d.pais +'</p>'

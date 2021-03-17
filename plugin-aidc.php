@@ -84,7 +84,6 @@ function campos_remate($post){
     $tel = get_post_meta( $post->ID, 'aidc-tel', true );
     $pais = get_post_meta( $post->ID, 'aidc-pais', true );
     $fecha = get_post_meta( $post->ID, 'aidc-fecha', true );
-    $fecha_baja = get_post_meta( $post->ID, 'aidc-fecha-baja', true );
     $codigo = get_post_meta( $post->ID, 'aidc-codigo', true );
     $competencias = get_post_meta( $post->ID, 'aidc-competencias', true );
     
@@ -110,10 +109,6 @@ function campos_remate($post){
         <tr>
         <td width="20%"><strong>Fecha de alta </strong><br /></td>
         <td width="80%"><input type="date" name="aidc-fecha" value="<?php echo sanitize_text_field($fecha);?>" /></td>
-        </tr>
-        <tr>
-        <td width="20%"><strong>Fecha del expiración </strong><br /></td>
-        <td width="80%"><input type="date" name="aidc-fecha-baja" value="<?php echo sanitize_text_field($fecha_baja);?>" /></td>
         </tr>
         <tr>
         <td><strong>Código del curso </strong></td>
@@ -154,9 +149,6 @@ function save_acretitac( $post_id ) {
     if( isset( $_POST[ 'aidc-fecha' ] ) ) {
         update_post_meta( $post_id, 'aidc-fecha', $_POST[ 'aidc-fecha' ] );
     } 
-    if( isset( $_POST[ 'aidc-fecha-baja' ] ) ) {
-        update_post_meta( $post_id, 'aidc-fecha-baja', $_POST[ 'aidc-fecha-baja' ] );
-    }
     if( isset( $_POST[ 'aidc-codigo' ] ) ) {
         update_post_meta( $post_id, 'aidc-codigo', $_POST[ 'aidc-codigo' ] );
     } 
@@ -230,25 +222,32 @@ function filter_acreditados(){
     if(isset( $_POST['busqueda']) && !empty( $_POST['busqueda'] ) ){
         //busqueda por titulo del post y por la metadata
         $q = $_POST['busqueda'];
+        // $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
+        //         FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
+        //         WHERE 1=1 
+        //         AND (wp_posts.post_title LIKE "%'.$q .'%") AND wp_posts.post_type = "acreditacion" 
+        //         AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "'.$q .'")) 
+        //         GROUP BY wp_posts.ID 
+        //         ORDER BY wp_posts.post_date DESC';
         $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
-                FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
-                WHERE 1=1 
-                AND (wp_posts.post_title LIKE "%'.$q .'%") AND wp_posts.post_type = "acreditacion" 
-                AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "'.$q .'")) 
-                GROUP BY wp_posts.ID 
-                ORDER BY wp_posts.post_date DESC';
+        FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
+        WHERE 1=1 
+        AND (wp_posts.post_title LIKE "%'.$q .'%") AND wp_posts.post_type = "acreditacion" 
+        AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "'.$q.'") OR (wp_postmeta.meta_key = "aidc-competencias" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "%'.$q.'%") ) 
+        GROUP BY wp_posts.ID 
+        ORDER BY wp_posts.post_date DESC';
 
         $wpdb->query($wpdb->prepare($query)); 
         $results = $wpdb->last_result;
 
         foreach($results as $result){
             $post_meta = get_post_meta($result->ID);
-            $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha-baja'][0]));
+            $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha'][0]));
 
             $data[] = array(
                 'codigo'        => $post_meta['aidc-codigo'][0],
                 'nombre'        =>  $result->post_title,
-                'pasaporte'     => $post_meta['aidc-pasaporte'][0],
+                //'pasaporte'     => $post_meta['aidc-pasaporte'][0],
                 'mail'          => $post_meta['aidc-mail'][0],
                 'tel'           => $post_meta['aidc-tel'][0],
                 'pais'          => $post_meta['aidc-pais'][0],

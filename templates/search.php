@@ -1,29 +1,37 @@
 <?php
     global $wpdb;
-    $query_1 = array(
-        'post_type'     => 'acreditacion',
-        'post_status' => 'publish',
-        'orderby' => array(
-            'aidc-fecha' => 'asc'
-        ),
-        'posts_per_page'=> 21,
-        'paged' => get_query_var('paged') ? get_query_var('paged') : 1
-    );
+    if(isset($_GET['codigo']) && !empty($_GET['codigo'])){
+        $codigo = $_GET['codigo'];
+        $query_1 = array(
+            'post_type'     => 'acreditacion',
+            'post_status'   => 'publish',
+            'paged'         => get_query_var('paged') ? get_query_var('paged') : 1,
+            'meta_query'    => array(
+                'relation'  => 'AND',
+                array(
+                    'key'       => 'aidc-codigo',
+                    'value'     => $codigo,
+                    'compare'   => 'LIKE'
+                )
+            )
+        );
+
+    }else{
+        $query_1 = array(
+            'post_type'     => 'acreditacion',
+            'post_status' => 'publish',
+            'orderby' => array(
+                'aidc-fecha' => 'asc'
+            ),
+            'posts_per_page'=> 21,
+            'paged' => get_query_var('paged') ? get_query_var('paged') : 1
+        );
+    }
+    
 
     $acreditacion = new WP_Query($query_1); 
 
    
-
-    $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
-    --     FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
-    -- WHERE 1=1 
-    -- AND (wp_posts.post_title LIKE "%AXR43219FF%") AND wp_posts.post_type = "acreditacion" 
-    -- AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "AXR43219FF")) 
-    -- GROUP BY wp_posts.ID 
-    -- ORDER BY wp_posts.post_date DESC';
-
-    $wpdb->query($wpdb->prepare($query)); 
-    $data = $wpdb->last_result;
     //var_dump($data);
     ?>
 
@@ -37,7 +45,7 @@
     <div class="">
         <div class="row justify-content-center">
           <div class="col-12 col-sm-7 col-lg-5">
-              <input type="text" id="q" name="s" class="form-control input-busqueda" placeholder="Ingresá nombre y apellido o código">
+              <input type="text" id="q" name="s" class="form-control input-busqueda" placeholder="Ingresá nombre y apellido, código o empatía">
           </div>
           
           <div class="col-12 col-sm-2 mt-3 mt-sm-0">
@@ -52,7 +60,7 @@
                 while($acreditacion->have_posts()):
                     $acreditacion->the_post();
                     $post_meta = get_post_meta(get_the_id());
-                    $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha-baja'][0]));
+                    $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha'][0]));
         ?>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card">
@@ -62,11 +70,11 @@
                     </div>
                     <hr>
                     <h3 class="card-title"><?php echo get_the_title();?></h3>
-                    <h6 class="card-subtitle mb-2 text-muted">Pasaporte: <?php echo $post_meta['aidc-pasaporte'][0];?></h6>
+                    
                     <p class="mb-2"><strong>mail:</strong> <?php echo $post_meta['aidc-mail'][0];?></p>
                     <p class="mb-2"><strong>Teléfono:</strong> <?php echo $post_meta['aidc-tel'][0];?></p>
                     <p class="mb-2"><strong>País:</strong> <?php echo $post_meta['aidc-pais'][0];?></p>
-                    <p class="mb-2"><strong>Fecha vencimiento:</strong> <?php echo $fecha;?></p>
+                    <p class="mb-2"><strong>Fecha de realización:</strong> <?php echo $fecha;?></p>
 
                     <?php
                         $colores = ['bg-primary', 'bg-success','bg-warning'];
