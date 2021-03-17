@@ -191,8 +191,11 @@ function assets_aidc(){
     //mi js
     wp_enqueue_script( 'mijs',ESTILOS_PLUGIN_URL .'js/app.js', array( 'jquery' ),'',true );
 
+    //wp_localize_script('ajax_script', 'aidc_vars', ['ajaxurl'=> admin_url('admin-ajax.php')]);
+
 }
 add_action('wp_enqueue_scripts','assets_aidc');
+
 
 //shortcode para el hero
 add_shortcode('search_acreditados', 'acreditados_template');
@@ -200,4 +203,55 @@ add_shortcode('search_acreditados', 'acreditados_template');
 function acreditados_template(){
     $url = BELOP_AIDC_PLUGIN_PATH .'templates/search.php';
     require_once ("$url");
+}
+
+function my_enqueue_scripts() {
+    wp_enqueue_script('jquery');
+    wp_localize_script( 'jquery', 'aidc_vars', array(
+        'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+        )
+    );
+}
+add_action('wp_enqueue_scripts','my_enqueue_scripts');
+
+//ajax
+add_action('wp_ajax_filterAcreditados', 'filter_acreditados');
+add_action('wp_ajax_nopriv_filterAcreditados', 'filter_acreditados');
+
+function filter_acreditados(){
+    //$q = $_POST['busqueda'];
+    global $wpdb;
+    if(isset( $_POST['busqueda']) && !empty( $_POST['busqueda'] ) ){
+        //busqueda por titulo del post y por la metadata
+        $q = $_POST['busqueda'];
+        $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
+                FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
+                WHERE 1=1 
+                AND (wp_posts.post_title LIKE "%'.$q .'%") AND wp_posts.post_type = "acreditacion" 
+                AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "'.$q .'")) 
+                GROUP BY wp_posts.ID 
+                ORDER BY wp_posts.post_date DESC';
+
+        $wpdb->query($wpdb->prepare($query)); 
+        $results = $wpdb->last_result;
+
+        foreach($results as $result){
+            $post_meta = get_post_meta($result->ID);
+            $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha-baja'][0]));
+
+            $data[] = array(
+                'codigo'        => $post_meta['aidc-codigo'][0],
+                'nombre'        =>  $result->post_title,
+                'pasaporte'     => $post_meta['aidc-pasaporte'][0],
+                'mail'          => $post_meta['aidc-mail'][0],
+                'tel'           => $post_meta['aidc-tel'][0],
+                'pais'          => $post_meta['aidc-pais'][0],
+                'fecha'         => $fecha,
+                'competencias'  => $post_meta['aidc-competencias'][0]
+            );
+        }
+
+        wp_send_json($data);
+    }
+
 }

@@ -12,14 +12,66 @@
 
     $acreditacion = new WP_Query($query_1); 
     //var_dump($acreditacion);
-?>
+
+    $args_2= array(
+        'post_type'     => 'acreditacion',
+        'post_status' => 'publish',
+        'meta_query' => array(
+            array(
+                'key'     => 'aidc-codigo',
+                'value'   => 'AXR43219FF',
+                'compare' => 'LIKE'
+            ),
+        ),
+    );
+
+    // $map_posts = new WP_Query(
+    //     array(
+    //     'post_type' => 'acreditacion',
+    //     'title_filter' => 'Lope',
+    //     'title_filter_relation' => 'OR',
+    //     'meta_query' => array(
+    //         'relation' => 'OR',
+    //         array(
+    //         'key' => 'aidc-codigo',
+    //         'value' => 'lope',
+    //         'compare' => 'LIKE'
+    //     )))
+    // );
+    // $map_posts = new WP_Query(
+    //     array(
+    //         'post_type' => 'acreditacion',
+    //         'post_status' => 'publish',
+    //         's' => 'lopez',
+    //         'meta_query' => array(
+    //             'relation' => 'AND',
+    //             array(
+    //             'key' => 'aidc-codigo',
+    //             'value' => 'lopez',
+    //             'compare' => 'LIKE'
+    //         ),      
+    //         ))
+    //   );
+
+    $query = 'SELECT SQL_CALC_FOUND_ROWS wp_posts.* 
+    FROM wp_posts INNER JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id) 
+WHERE 1=1 
+AND (wp_posts.post_title LIKE "%AXR43219FF%") AND wp_posts.post_type = "acreditacion" 
+AND (wp_posts.post_status = "publish") OR ((wp_postmeta.meta_key = "aidc-codigo" AND CAST(wp_postmeta.meta_value AS CHAR) LIKE "AXR43219FF")) 
+GROUP BY wp_posts.ID 
+ORDER BY wp_posts.post_date DESC';
+
+    $wpdb->query($wpdb->prepare($query)); 
+    $data = $wpdb->last_result;
+    //var_dump($data);
+    ?>
 
 
 <div class="container ">
     <div class=" mt-5">
         <div class="row justify-content-center">
           <div class="col-12 col-sm-7 col-lg-4">
-              <input type="text" name="s" class="form-control" placeholder="Ingresá nombre y apellido o código">
+              <input type="text" id="q" name="s" class="form-control" placeholder="Ingresá nombre y apellido o código">
           </div>
           
           <div class="col-12 col-sm-2 mt-3 mt-sm-0">
@@ -28,12 +80,13 @@
         </div>
     </div>
     <div>
-      <div class="row mt-5">
+      <div class="row mt-5" id="lista">
         <?php 
             if($acreditacion->have_posts()):
                 while($acreditacion->have_posts()):
                     $acreditacion->the_post();
                     $post_meta = get_post_meta(get_the_id());
+                    $fecha = date("d-m-Y", strtotime($post_meta['aidc-fecha-baja'][0]));
         ?>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card">
@@ -47,7 +100,7 @@
                     <p class="mb-2"><strong>mail:</strong> <?php echo $post_meta['aidc-mail'][0];?></p>
                     <p class="mb-2"><strong>Teléfono:</strong> <?php echo $post_meta['aidc-tel'][0];?></p>
                     <p class="mb-2"><strong>País:</strong> <?php echo $post_meta['aidc-pais'][0];?></p>
-                    <p class="mb-2"><strong>Fecha vencimiento:</strong> <?php echo $post_meta['aidc-fecha-baja'][0];?></p>
+                    <p class="mb-2"><strong>Fecha vencimiento:</strong> <?php echo $fecha;?></p>
 
                     <?php
                         $colores = ['bg-primary', 'bg-success','bg-warning'];
